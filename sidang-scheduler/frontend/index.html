@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistem Penjadwalan Sidang Tugas Akhir Terotomasi - Menerapkan konsep Sistem Operasi untuk penjadwalan sidang skripsi">
+    <title>Sistem Penjadwalan Sidang TA | OS-Based Scheduler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ============================== -->
+    <!-- HEADER / NAVBAR                -->
+    <!-- ============================== -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                        <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="logo-title">Sidang Scheduler</h1>
+                    <p class="logo-subtitle">OS-Based Resource Allocation</p>
+                </div>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-tab="form-section" id="nav-ajukan">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    Ajukan Sidang
+                </button>
+                <button class="nav-btn" data-tab="jadwal-section" id="nav-jadwal">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                    Daftar Jadwal
+                </button>
+                <button class="nav-btn" data-tab="konsep-section" id="nav-konsep">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    Konsep OS
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- ============================== -->
+        <!-- SECTION: FORM AJUKAN SIDANG    -->
+        <!-- ============================== -->
+        <section id="form-section" class="section active">
+            <div class="section-header">
+                <h2>Ajukan Jadwal Sidang Baru</h2>
+                <p class="section-desc">
+                    <span class="badge badge-info">Analogi OS</span>
+                    Proses (mahasiswa) me-request alokasi resource (dosen + ruang) pada time slice tertentu
+                </p>
+            </div>
+
+            <form id="sidang-form" class="form-card">
+                <div class="form-grid">
+                    <!-- Nama Mahasiswa -->
+                    <div class="form-group full-width">
+                        <label for="nama_mahasiswa">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Nama Mahasiswa
+                        </label>
+                        <input type="text" id="nama_mahasiswa" placeholder="Masukkan nama lengkap mahasiswa" required>
+                    </div>
+
+                    <!-- Dosen Penguji -->
+                    <div class="form-group full-width">
+                        <label>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            Dosen Penguji
+                            <span class="label-hint">(Resource - pilih minimal 1)</span>
+                        </label>
+                        <div id="dosen-checkboxes" class="checkbox-group">
+                            <div class="loading-placeholder">Memuat data dosen...</div>
+                        </div>
+                    </div>
+
+                    <!-- Ruang Sidang -->
+                    <div class="form-group">
+                        <label for="ruang_id">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Ruang Sidang
+                            <span class="label-hint">(Resource)</span>
+                        </label>
+                        <select id="ruang_id" required>
+                            <option value="">Memuat data ruang...</option>
+                        </select>
+                    </div>
+
+                    <!-- Waktu Mulai -->
+                    <div class="form-group">
+                        <label for="waktu_mulai">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Waktu Mulai
+                        </label>
+                        <input type="datetime-local" id="waktu_mulai" required>
+                    </div>
+
+                    <!-- Waktu Selesai -->
+                    <div class="form-group">
+                        <label for="waktu_selesai">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
+                            Waktu Selesai
+                        </label>
+                        <input type="datetime-local" id="waktu_selesai" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btn-ajukan">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Ajukan Sidang
+                </button>
+            </form>
+
+            <!-- Hasil / Response -->
+            <div id="result-container" class="result-container hidden">
+                <div id="result-content"></div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- SECTION: DAFTAR JADWAL         -->
+        <!-- ============================== -->
+        <section id="jadwal-section" class="section">
+            <div class="section-header">
+                <h2>Daftar Jadwal Sidang</h2>
+                <p class="section-desc">
+                    <span class="badge badge-info">Analogi OS</span>
+                    Process Table — menampilkan semua proses beserta status dan resource yang dialokasikan
+                </p>
+            </div>
+
+            <!-- Filter -->
+            <div class="filter-bar">
+                <button class="filter-btn active" data-status="all" id="filter-all">Semua</button>
+                <button class="filter-btn" data-status="TERJADWAL" id="filter-terjadwal">
+                    <span class="status-dot status-terjadwal"></span> Terjadwal
+                </button>
+                <button class="filter-btn" data-status="GAGAL" id="filter-gagal">
+                    <span class="status-dot status-gagal"></span> Gagal
+                </button>
+                <button class="filter-btn" data-status="PENDING" id="filter-pending">
+                    <span class="status-dot status-pending"></span> Pending
+                </button>
+                <button class="btn-refresh" id="btn-refresh" title="Refresh data">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrapper">
+                <table class="jadwal-table" id="jadwal-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Mahasiswa</th>
+                            <th>Dosen Penguji</th>
+                            <th>Ruang</th>
+                            <th>Waktu</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jadwal-tbody">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                                <p>Memuat jadwal sidang...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!-- SECTION: KONSEP OS             -->
+        <!-- ============================== -->
+        <section id="konsep-section" class="section">
+            <div class="section-header">
+                <h2>Konsep Sistem Operasi yang Diterapkan</h2>
+                <p class="section-desc">
+                    Bagaimana konsep OS diimplementasikan dalam sistem penjadwalan sidang ini
+                </p>
+            </div>
+
+            <div class="konsep-grid">
+                <div class="konsep-card">
+                    <div class="konsep-icon" style="--accent: #6366f1;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <h3>Resource Management</h3>
+                    <p>Dosen dan ruang sidang dianalogikan sebagai <strong>resource terbatas</strong> dalam OS. Setiap resource hanya bisa dialokasikan ke satu proses pada satu waktu (mutual exclusion).</p>
+                    <div class="konsep-mapping">
+                        <span>Dosen → CPU/Printer</span>
+                        <span>Ruang → Memory/Disk</span>
+                    </div>
+                </div>
+
+                <div class="konsep-card">
+                    <div class="konsep-icon" style="--accent: #10b981;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    </div>
+                    <h3>Process Scheduling</h3>
+                    <p>Sidang mahasiswa dianalogikan sebagai <strong>proses</strong> yang membutuhkan alokasi resource. Setiap proses memiliki state: PENDING (Ready), TERJADWAL (Running), GAGAL (Blocked).</p>
+                    <div class="konsep-mapping">
+                        <span>Sidang → Process</span>
+                        <span>Antrian → Ready Queue</span>
+                    </div>
+                </div>
+
+                <div class="konsep-card">
+                    <div class="konsep-icon" style="--accent: #f59e0b;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <h3>Deadlock Avoidance</h3>
+                    <p>Fungsi <code>cek_konflik()</code> mengimplementasikan <strong>Banker's Algorithm</strong>. Sebelum mengalokasikan resource, sistem memeriksa apakah alokasi tersebut akan menyebabkan konflik (unsafe state).</p>
+                    <div class="konsep-mapping">
+                        <span>cek_konflik → Safety Check</span>
+                        <span>Konflik → Unsafe State</span>
+                    </div>
+                </div>
+
+                <div class="konsep-card">
+                    <div class="konsep-icon" style="--accent: #ec4899;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <h3>Mutual Exclusion</h3>
+                    <p>Satu dosen tidak boleh menguji dua sidang bersamaan, satu ruang tidak boleh dipakai dua sidang bersamaan. Ini adalah implementasi <strong>critical section</strong> pada resource.</p>
+                    <div class="konsep-mapping">
+                        <span>1 Dosen → 1 Sidang/waktu</span>
+                        <span>1 Ruang → 1 Sidang/waktu</span>
+                    </div>
+                </div>
+
+                <div class="konsep-card">
+                    <div class="konsep-icon" style="--accent: #8b5cf6;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    </div>
+                    <h3>Recovery & Rescheduling</h3>
+                    <p>Ketika sidang gagal karena konflik, sistem menyarankan <strong>slot waktu alternatif</strong> terdekat. Mirip rescheduling di OS ketika proses gagal mendapat resource.</p>
+                    <div class="konsep-mapping">
+                        <span>Saran Slot → Rescheduling</span>
+                        <span>Alternatif → Recovery</span>
+                    </div>
+                </div>
+
+                <div class="konsep-card">
+                    <div class="konsep-icon" style="--accent: #06b6d4;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                    </div>
+                    <h3>Resource Allocation Table</h3>
+                    <p>Database menyimpan <strong>tabel alokasi resource</strong>: siapa menggunakan apa dan kapan. Mirip allocation matrix pada Banker's Algorithm di OS.</p>
+                    <div class="konsep-mapping">
+                        <span>DB → Allocation Matrix</span>
+                        <span>Relasi → Assignment Edge</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Sistem Penjadwalan Sidang TA — Implementasi Konsep Sistem Operasi</p>
+        <p class="footer-sub">Resource Management · Process Scheduling · Deadlock Avoidance</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
